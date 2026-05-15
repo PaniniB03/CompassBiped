@@ -22,9 +22,7 @@ Script: `bipedCompassCanon3.py`
 ## Running
 - Run `python3 bipedCompassCanon3.py` to visualize on MuJoCo and load the plots. Expected:
 <div align="center">
-  <a href="Compass-2steps.mov">
-    <video src="Compass-2steps.mov" width="500" title="Click to enlarge">
-  </a>
+  <video src="Compass-2steps.mp4" width="500" controls></video>
   <br>
   <sup>Expected output</sup>
 </div>
