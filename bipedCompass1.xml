@@ -1,0 +1,62 @@
+<mujoco model="hybrid_simplest">
+  <compiler angle="radian" coordinate="local"/>
+  <option timestep="0.001" integrator="RK4" gravity="0 0 0">
+    <flag contact="disable"/>
+  </option>
+
+  <visual>
+    <headlight ambient="0.25 0.25 0.25"/>
+    <rgba haze=".3 .3 .3 1"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.8 0.8 1" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="texplane" type="2d" builtin="checker"
+             rgb1=".25 .25 .25" rgb2=".3 .3 .3"
+             width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+    <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+  </asset>
+
+  <!-- Default: turn OFF contacts everywhere (not using MuJoCo contact in hybrid mode) -->
+  <default>
+    <geom contype="0" conaffinity="0"/>
+  </default>
+
+  <worldbody>
+    <light directional="true" diffuse=".8 .8 .8" specular=".2 .2 .2" pos="0 0 5" dir="0 0 -1"/>
+
+    <!-- purely visual ground -->
+    <!-- <geom name="ground" type="plane" pos="0 0 0" size="5 5 0.1" material="matplane" rgba=".1 0 .1 1"/> -->
+
+
+	<geom name="floor" pos="0 0 0" size="20 5 0.1" type="plane" material="matplane"/>
+    <!-- Stance-foot frame: stance foot fixed at world origin -->
+    <body name="stance_leg" pos="0 0 0">
+      <joint name="base_x" type="slide" axis="1 0 0" limited="false"/>
+        <!-- stance angle theta about +y (planar x-z motion) -->
+      <joint name="theta" type="hinge" pos="0 0 0" axis="0 1 0" limited="false"/>
+
+      <!-- stance leg, length L=1 (cylinder half-length = 0.5, centered at z=0.5) -->
+      <geom name="stance_leg_geom" type="cylinder" size="0.03 0.5" pos="0 0 0.5" rgba="0 .9 0 .35"/>
+
+      <!-- stance foot marker -->
+      <geom name="stance_foot_geom" type="sphere" size="0.05" pos="0 0 0.05" rgba=".9 .9 0 0.35"/>
+      <site name="stance_foot_site" pos="0 0 0" size="0.01" rgba="0 .9 .9 1"/>
+
+      <!-- Hip at end of stance leg -->
+      <body name="swing_leg" pos="0 0 1.0">
+        <!-- inter-leg angle phi: flip axis so swing absolute angle becomes (theta - phi) -->
+        <joint name="phi" type="hinge" pos="0 0 0" axis="0 -1 0" limited="false"/>
+
+        <!-- hip marker -->
+        <geom name="hip_geom" type="sphere" size="0.045" pos="0 0 0" rgba="0.9 0.2 0.2 0.35"/>
+        <site name="hip_site" pos="0 0 0" size="0.012" rgba="1 0.2 0.2 1"/>
+
+        <!-- swing leg goes from hip down to swing foot: length L=1 -->
+        <geom name="swing_leg_geom" type="cylinder" size="0.03 0.5" pos="0 0 -0.5" rgba="0 0 .9 .35"/>
+        <geom name="swing_foot_geom" type="sphere" size="0.05" pos="0 0 -.95" rgba=".9 .9 0 0.35"/>
+        <site name="swing_foot_site" pos="0 0 -1.0" size="0.01" rgba="0 .9 .9 1"/>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
